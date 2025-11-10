@@ -1,0 +1,126 @@
+Chit 23: 
+Using MySQL and JAVA conncetivity (Two Tier) perform the following queries 
+i. 
+Create a table of employee details , Employee(SSN, Ename,state, salary) 
+ii. Insert Records into Employee table 
+iii. Retrieve the details based on Social Security Number(SSN). 
+iv. Update the employee state from 'MH' to 'TN' 
+v. Delete all the employees from ‘Gujrat’
+
+
+
+The MySQL commands to set up and query the database
+
+And the Java (JDBC) code snippets to perform each operation
+
+💾 MySQL Queries
+i. Create a table of employee details
+CREATE TABLE Employee (
+    SSN INT PRIMARY KEY,
+    Ename VARCHAR(30),
+    State VARCHAR(30),
+    Salary INT
+);
+
+ii. Insert records into Employee table
+INSERT INTO Employee VALUES
+(101, 'Amit', 'MH', 40000),
+(102, 'Sneha', 'TN', 35000),
+(103, 'Pooja', 'Gujrat', 45000),
+(104, 'Ramesh', 'MH', 30000),
+(105, 'Sagar', 'Gujrat', 50000);
+
+iii. Retrieve the details based on Social Security Number (SSN)
+SELECT * 
+FROM Employee
+WHERE SSN = 101;
+
+iv. Update the employee state from 'MH' to 'TN'
+UPDATE Employee
+SET State = 'TN'
+WHERE State = 'MH';
+
+v. Delete all the employees from ‘Gujrat’
+DELETE FROM Employee
+WHERE State = 'Gujrat';
+
+
+✅ All the above commands will work directly in MySQL Terminal (Ubuntu / Windows).
+
+☕ JAVA (JDBC) Connectivity Code
+
+Here’s a simple two-tier JDBC example that connects to MySQL and performs these operations.
+
+Make sure you have:
+
+MySQL JDBC driver (mysql-connector-j.jar) in your classpath
+
+A database named testdb created
+
+MySQL server running on port 3306
+
+Java Program: EmployeeJDBC.java
+import java.sql.*;
+
+class EmployeeJDBC {
+    public static void main(String[] args) {
+        try {
+            // 1. Load the MySQL JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // 2. Connect to the MySQL database
+            Connection con = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/testdb", "root", "your_password");
+
+            Statement st = con.createStatement();
+
+            // (i) Create Table
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS Employee (SSN INT PRIMARY KEY, Ename VARCHAR(30), State VARCHAR(30), Salary INT)");
+            System.out.println("Table created successfully!");
+
+            // (ii) Insert Records
+            st.executeUpdate("INSERT INTO Employee VALUES (101,'Amit','MH',40000), (102,'Sneha','TN',35000), (103,'Pooja','Gujrat',45000)");
+            System.out.println("Records inserted successfully!");
+
+            // (iii) Retrieve based on SSN
+            ResultSet rs = st.executeQuery("SELECT * FROM Employee WHERE SSN = 101");
+            while (rs.next()) {
+                System.out.println("SSN: " + rs.getInt(1) + " Name: " + rs.getString(2) +
+                                   " State: " + rs.getString(3) + " Salary: " + rs.getInt(4));
+            }
+
+            // (iv) Update employee state from 'MH' to 'TN'
+            st.executeUpdate("UPDATE Employee SET State='TN' WHERE State='MH'");
+            System.out.println("State updated successfully!");
+
+            // (v) Delete employees from Gujrat
+            st.executeUpdate("DELETE FROM Employee WHERE State='Gujrat'");
+            System.out.println("Employees from Gujrat deleted successfully!");
+
+            // 6. Close connection
+            con.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+✅ Explanation (for Viva)
+Step	Task	Method Used
+1	Load Driver	Class.forName()
+2	Establish Connection	DriverManager.getConnection()
+3	Execute Queries	Statement.executeUpdate() and Statement.executeQuery()
+4	Read Data	ResultSet
+5	Close Connection	con.close()
+
+
+💡 To Compile and Run (Ubuntu Terminal)
+javac -cp .:mysql-connector-j.jar EmployeeJDBC.java
+java -cp .:mysql-connector-j.jar EmployeeJDBC
+
+✅ Final Output (Example)
+Table created successfully!
+Records inserted successfully!
+SSN: 101 Name: Amit State: MH Salary: 40000
+State updated successfully!
+Employees from Gujrat deleted successfully!
